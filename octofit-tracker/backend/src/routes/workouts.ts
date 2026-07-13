@@ -1,9 +1,15 @@
 import { Router } from 'express';
+import Workout from '../models/Workout';
 
 const workoutsRouter = Router();
 
-workoutsRouter.get('/', (_req, res) => {
-  res.json({ resource: 'workouts', items: [] });
+workoutsRouter.get('/', async (_req, res) => {
+  try {
+    const items = await Workout.find().sort({ createdAt: -1 }).lean();
+    res.json({ resource: 'workouts', items });
+  } catch (error) {
+    res.status(500).json({ message: 'Failed to fetch workouts', error });
+  }
 });
 
 export default workoutsRouter;
